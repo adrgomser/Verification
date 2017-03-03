@@ -395,6 +395,9 @@ public class FileUtils {
 			sb.append(c);
 		} while(((intC=br.read())!=-1));
 		line=sb.toString();
+		System.out.println(line);
+		line=line.replaceAll("\r", "");
+		System.out.println(line);
 		return line;
 		}
 	

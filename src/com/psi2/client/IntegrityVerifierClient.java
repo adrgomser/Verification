@@ -24,7 +24,7 @@ public class IntegrityVerifierClient {
 					.getDefault();
 			
 			Socket socket = (Socket) socketFactory.createSocket("localhost",
-					7071);
+					7070);
 			// crea un PrintWriter para enviar mensaje/MAC al servidor
 			PrintWriter output = new PrintWriter(new OutputStreamWriter(
 					socket.getOutputStream()));
@@ -41,7 +41,7 @@ public class IntegrityVerifierClient {
 			// crea un objeto BufferedReader para leer la respuesta del servidor
 			BufferedReader input = new BufferedReader(new InputStreamReader(
 					socket.getInputStream()));
-			String respuesta = input.readLine(); // lee la respuesta del
+			String respuesta = FileUtils.readLine(input); // lee la respuesta del
 													// servidor
 			JOptionPane.showMessageDialog(null, respuesta); // muestra la
 															// respuesta al
@@ -49,6 +49,7 @@ public class IntegrityVerifierClient {
 			output.close();
 			input.close();
 			socket.close();
+
 		} // end try
 		catch (IOException ioException) {
 			ioException.printStackTrace();
@@ -68,5 +69,7 @@ public class IntegrityVerifierClient {
 
 		new IntegrityVerifierClient();
 	}
+
+	
 
 }

@@ -10,7 +10,6 @@ import java.net.Socket;
 
 import javax.net.ServerSocketFactory;
 
-import com.psi2.client.IntegrityVerifierClient;
 import com.psi2.config.Configuration;
 import com.psi2.config.GlobalConfiguration;
 import com.psi2.utils.ExecutionUtils;
@@ -26,7 +25,7 @@ public class IntegrityVerifierServer {
 				.getDefault();
 		// creación de un objeto ServerSocket escuchando peticiones en el puerto
 		// 7070
-		serverSocket = (ServerSocket) socketFactory.createServerSocket(7071);
+		serverSocket = (ServerSocket) socketFactory.createServerSocket(7070);
 	}
 
 	// ejecución del servidor para escuchar peticiones de los clientes
@@ -35,17 +34,18 @@ public class IntegrityVerifierServer {
 			// espera las peticiones del cliente para comprobar mensaje/MAC
 			try {
 				System.err.println("Esperando conexiones de clientes...");
-
 				Socket socket = (Socket) serverSocket.accept();
 				// abre un BufferedReader para leer los datos del cliente
 				BufferedReader input = new BufferedReader(
 						new InputStreamReader(socket.getInputStream()));
+
 				// abre un PrintWriter para enviar datos al cliente
 				PrintWriter output = new PrintWriter(new OutputStreamWriter(
 						socket.getOutputStream()));
 				// se lee del cliente el mensaje y el macdelMensajeEnviado
-				String mensaje = input.readLine();
-				String macMensajeEnviado = input.readLine();
+				String mensaje = FileUtils.readLine(input);
+
+				String macMensajeEnviado = FileUtils.readLine(input);
 				String macdelMensajeCalculado = FileUtils.getMac(mensaje, ExecutionUtils.getConfiguration());;
 				//String macdelMensajeCalculado="asd";
 				// a continuación habría que calcular el macdelMensajeEnviado
@@ -56,6 +56,7 @@ public class IntegrityVerifierServer {
 				if (macMensajeEnviado.equals(macdelMensajeCalculado)) {
 					output.println("Mensaje enviado integro ");
 				} else {
+					System.out.println(macMensajeEnviado+" --- "+(macdelMensajeCalculado));
 					output.println("Mensaje enviado no integro.");
 				}
 				output.close();
