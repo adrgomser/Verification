@@ -9,6 +9,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
@@ -17,9 +18,48 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import javax.crypto.KeyGenerator;
+import javax.crypto.Mac;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
+
+
 import com.psi2.config.Configuration;
 
 public class FileUtils {
+	
+	/**
+	 * Method to get the mac of a message
+	 */
+	public static String getMac(String mensaje,Configuration config){
+		Mac mac1 = null;
+		try {
+			mac1 = Mac.getInstance(config.getAlgoritmo());
+		} catch (NoSuchAlgorithmException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		KeyGenerator kg = null;
+		try {
+			kg = KeyGenerator.getInstance(config.getAlgoritmo());
+		} catch (NoSuchAlgorithmException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		byte[] b = null;
+		SecretKey clave = new SecretKeySpec(config.getClave().getBytes(), 0, config.getClave().getBytes().length, config.getAlgoritmo());
+			try {
+				mac1.init(clave);
+				mac1.update(mensaje.getBytes());
+				b = mac1.doFinal();
+			} catch (InvalidKeyException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return Conversion.byteArrayToHexString(b);
+
+		
+	}
 
 	/**
 	 * Method to read a file

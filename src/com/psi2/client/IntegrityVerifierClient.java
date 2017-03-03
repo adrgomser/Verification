@@ -10,6 +10,11 @@ import java.net.Socket;
 import javax.net.SocketFactory;
 import javax.swing.JOptionPane;
 
+import com.psi2.config.Configuration;
+import com.psi2.config.GlobalConfiguration;
+import com.psi2.utils.ExecutionUtils;
+import com.psi2.utils.FileUtils;
+
 public class IntegrityVerifierClient {
 	public IntegrityVerifierClient() {
 		// Constructor que abre una conexión Socket para enviar mensaje/MAC al
@@ -17,8 +22,9 @@ public class IntegrityVerifierClient {
 		try {
 			SocketFactory socketFactory = (SocketFactory) SocketFactory
 					.getDefault();
+			
 			Socket socket = (Socket) socketFactory.createSocket("localhost",
-					7070);
+					7071);
 			// crea un PrintWriter para enviar mensaje/MAC al servidor
 			PrintWriter output = new PrintWriter(new OutputStreamWriter(
 					socket.getOutputStream()));
@@ -28,7 +34,8 @@ public class IntegrityVerifierClient {
 			output.println(mensaje); // envio del mensaje al servidor
 			// habría que calcular el correspondiente MAC con la clave
 			// compartida por servidor/cliente
-			String macdelMensaje = null;//TODO
+			String macdelMensaje = FileUtils.getMac(mensaje, ExecutionUtils.getConfiguration());//TODO
+			//String macdelMensaje="asd";
 			output.println(macdelMensaje);
 			output.flush();
 			// crea un objeto BufferedReader para leer la respuesta del servidor
@@ -54,6 +61,11 @@ public class IntegrityVerifierClient {
 
 	// ejecución del cliente de verificación de la integridad
 	public static void main(String args[]) {
+		GlobalConfiguration globalConfig=new GlobalConfiguration("C:\\Users\\ADRIAN\\Desktop\\Universidad\\SSI\\PAI\\PAI2\\config.properties", 
+				"C:\\Users\\ADRIAN\\Desktop\\Universidad\\SSI\\PAI\\PAI2\\Logs\\");
+		Configuration config=new Configuration(globalConfig);
+		ExecutionUtils.setConfiguration(config);
+
 		new IntegrityVerifierClient();
 	}
 

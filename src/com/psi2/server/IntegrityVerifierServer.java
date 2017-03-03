@@ -10,6 +10,12 @@ import java.net.Socket;
 
 import javax.net.ServerSocketFactory;
 
+import com.psi2.client.IntegrityVerifierClient;
+import com.psi2.config.Configuration;
+import com.psi2.config.GlobalConfiguration;
+import com.psi2.utils.ExecutionUtils;
+import com.psi2.utils.FileUtils;
+
 public class IntegrityVerifierServer {
 	private ServerSocket serverSocket;
 
@@ -20,15 +26,16 @@ public class IntegrityVerifierServer {
 				.getDefault();
 		// creación de un objeto ServerSocket escuchando peticiones en el puerto
 		// 7070
-		serverSocket = (ServerSocket) socketFactory.createServerSocket(7070);
+		serverSocket = (ServerSocket) socketFactory.createServerSocket(7071);
 	}
 
 	// ejecución del servidor para escuchar peticiones de los clientes
-	private void runServer() {
+	public void runServer() {
 		while (true) {
 			// espera las peticiones del cliente para comprobar mensaje/MAC
 			try {
 				System.err.println("Esperando conexiones de clientes...");
+
 				Socket socket = (Socket) serverSocket.accept();
 				// abre un BufferedReader para leer los datos del cliente
 				BufferedReader input = new BufferedReader(
@@ -38,9 +45,9 @@ public class IntegrityVerifierServer {
 						socket.getOutputStream()));
 				// se lee del cliente el mensaje y el macdelMensajeEnviado
 				String mensaje = input.readLine();
-				String macdelMensajeEnviado = input.readLine();
-				String macMensajeEnviado = null;
-				String macdelMensajeCalculado = null;
+				String macMensajeEnviado = input.readLine();
+				String macdelMensajeCalculado = FileUtils.getMac(mensaje, ExecutionUtils.getConfiguration());;
+				//String macdelMensajeCalculado="asd";
 				// a continuación habría que calcular el macdelMensajeEnviado
 				// que podría ser
 				// macdelMensajeCalculado y tener en cuenta los nonces para
@@ -62,6 +69,11 @@ public class IntegrityVerifierServer {
 
 	// ejecucion del servidor
 	public static void main(String args[]) throws Exception {
+		GlobalConfiguration globalConfig=new GlobalConfiguration("C:\\Users\\ADRIAN\\Desktop\\Universidad\\SSI\\PAI\\PAI2\\config.properties", 
+				"C:\\Users\\ADRIAN\\Desktop\\Universidad\\SSI\\PAI\\PAI2\\Logs\\");
+		Configuration config=new Configuration(globalConfig);
+		ExecutionUtils.setConfiguration(config);
+
 		IntegrityVerifierServer server = new IntegrityVerifierServer();
 		server.runServer();
 	}

@@ -21,6 +21,7 @@ public class Configuration {
 	private Map<String, List<String>> properties;
 	private Map<String, String> hashes;
 	private String algoritmo;
+	private String clave;
 	private String tiempo;
 	private GlobalConfiguration globalConfig;
 
@@ -140,6 +141,7 @@ public class Configuration {
 			if (file.exists()) {
 				propiedades.load(new FileInputStream(dir));
 				this.algoritmo = propiedades.getProperty("algoritmo");
+				this.clave = propiedades.getProperty("clave");
 				this.tiempo = propiedades.getProperty("tiempo");
 				String directories = propiedades.getProperty("directories");
 				String[] direc = directories.split(";");
@@ -214,6 +216,14 @@ public class Configuration {
 
 	public void setGlobalConfig(GlobalConfiguration globalConfig) {
 		this.globalConfig = globalConfig;
+	}
+
+	public String getClave() {
+		return clave;
+	}
+
+	public void setClave(String clave) {
+		this.clave = clave;
 	}
 
 }
