@@ -54,9 +54,10 @@ public class IntegrityVerifierServer {
 				// evitar los ataques de replay
 				// ………………………………..
 				if (macMensajeEnviado.equals(macdelMensajeCalculado)) {
+					FileUtils.logToFile(" OK --- "+macMensajeEnviado+" integro",ExecutionUtils.getConfiguration());
 					output.println("Mensaje enviado integro ");
 				} else {
-					System.out.println(macMensajeEnviado+" --- "+(macdelMensajeCalculado));
+					FileUtils.logToFile(" ERROR --- "+macMensajeEnviado+" no integro",ExecutionUtils.getConfiguration());
 					output.println("Mensaje enviado no integro.");
 				}
 				output.close();

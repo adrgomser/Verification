@@ -18,7 +18,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import javax.crypto.KeyGenerator;
 import javax.crypto.Mac;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
@@ -35,13 +34,6 @@ public class FileUtils {
 		Mac mac1 = null;
 		try {
 			mac1 = Mac.getInstance(config.getAlgoritmo());
-		} catch (NoSuchAlgorithmException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		KeyGenerator kg = null;
-		try {
-			kg = KeyGenerator.getInstance(config.getAlgoritmo());
 		} catch (NoSuchAlgorithmException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();

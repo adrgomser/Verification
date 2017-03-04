@@ -18,8 +18,6 @@ import java.util.Properties;
 
 public class Configuration {
 	private String dir;
-	private Map<String, List<String>> properties;
-	private Map<String, String> hashes;
 	private String algoritmo;
 	private String clave;
 	private String tiempo;
@@ -33,75 +31,10 @@ public class Configuration {
 		super();
 		this.dir = global.getConfigurationFile();
 		this.globalConfig = global;
-		this.hashes = loadHashes();
 		loadConfig(dir);
 	}
 
-	/**
-	 * Load Hashes from the logHash.txt found at log directory
-	 */
-	public Map<String, String> loadHashes() {
-		String logDir = globalConfig.getLogsDirectory();
-		File hashLog = new File(logDir + "\\logHash.txt");
-		hashes = new HashMap<String, String>();
-		if (hashLog.exists()) {
-			BufferedReader r;
-			try {
-				r = new BufferedReader(new FileReader(hashLog));
-				String line;
-				while ((line = readLine(r)) != null) {
-					String linea = line;
-					String[] palabras = linea.split(";");
-					hashes.put(palabras[0], palabras[1]);
-				}
-				r.close();
-			} catch (IOException e) {
-				
-			}
-		}
-		hashLog.delete();
-		return hashes;
-	}
 
-	/**
-	 * Save the logHash.txt when you click on the save button
-	 */
-	public void saveHashes() {
-		String logDir = globalConfig.getLogsDirectory();
-		File logs = new File(logDir);
-		File hashLog = new File(logDir + "\\logHash.txt");
-		if (!logs.exists()) {
-			logs.mkdirs();
-		}
-		if (!hashLog.exists()) {
-			try {
-				hashLog.createNewFile();
-			} catch (IOException e) {
-				
-			}
-		}
-		FileWriter fw = null;
-		try {
-			fw = new FileWriter(hashLog, true);
-		} catch (IOException e) {
-			
-		}
-		PrintWriter pw = null;
-		if (fw != null) {
-
-			pw = new PrintWriter(fw);
-			if (pw != null) {
-				for (String s : hashes.keySet()) {
-					pw.println((s + ";" + hashes.get(s)));
-				}
-
-				pw.flush();
-
-				pw.close();
-			}
-		}
-
-	}
 
 	
 	/**
@@ -133,7 +66,6 @@ public class Configuration {
 	 * Loading all the variables from the configuration file
 	 */
 	public void loadConfig(String dir) {
-		Map<String, List<String>> map = new HashMap<String, List<String>>();
 		Properties propiedades = new Properties();
 
 		try {
@@ -143,31 +75,12 @@ public class Configuration {
 				this.algoritmo = propiedades.getProperty("algoritmo");
 				this.clave = propiedades.getProperty("clave");
 				this.tiempo = propiedades.getProperty("tiempo");
-				String directories = propiedades.getProperty("directories");
-				String[] direc = directories.split(";");
-				int length = 1;
-				for (String s : direc) {
-					List<String> lista = new ArrayList<String>();
-					String files = propiedades.getProperty("" + length);
-					for (String r : files.split(";")) {
-						lista.add(r);
-					}
-					map.put(s, lista);
-					length++;
-				}
-				String urls = propiedades.getProperty("urls");
-				List<String> lista = new ArrayList<String>();
-				for (String s : urls.split(";")) {
-					lista.add(s);
-				}
-				map.put("urls", lista);
 			} 
 		} catch (FileNotFoundException e) {
 			
 		} catch (IOException e) {
 			
 		}
-		this.properties = map;
 	}
 
 	public String getDir() {
@@ -178,13 +91,7 @@ public class Configuration {
 		this.dir = dir;
 	}
 
-	public Map<String, List<String>> getProperties() {
-		return properties;
-	}
-
-	public void setProperties(Map<String, List<String>> properties) {
-		this.properties = properties;
-	}
+	
 
 	public String getAlgoritmo() {
 		return algoritmo;
@@ -202,13 +109,7 @@ public class Configuration {
 		this.tiempo = tiempo;
 	}
 
-	public Map<String, String> getHashes() {
-		return hashes;
-	}
 
-	public void setHashes(Map<String, String> hashes) {
-		this.hashes = hashes;
-	}
 
 	public GlobalConfiguration getGlobalConfig() {
 		return globalConfig;
