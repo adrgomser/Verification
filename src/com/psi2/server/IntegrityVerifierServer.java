@@ -53,14 +53,14 @@ public class IntegrityVerifierServer {
 				String nons = FileUtils.readLine(input);
 
 				String macdelMensajeOrigenCalculado = FileUtils.getMac(
-						cuentaOrigen, ExecutionUtils.getConfiguration());
-				;
+					cuentaOrigen, ExecutionUtils.getConfiguration());
+				
 				String macdelMensajeDestinoCalculado = FileUtils.getMac(
 						cuentaDestino, ExecutionUtils.getConfiguration());
-				;
+				
 				String macdelMensajeCantidadCalculado = FileUtils.getMac(
 						cantidad, ExecutionUtils.getConfiguration());
-				;
+				
 
 				String total = macMensajeOrigen + macMensajeDestino
 						+ macMensajeCantidad;
@@ -86,13 +86,18 @@ public class IntegrityVerifierServer {
 						.logFile(total + nons,
 								ExecutionUtils.getConfiguration());
 						output.println("Mensaje enviado integro ");
+						ExecutionUtils.setOk(ExecutionUtils.getOk()+1);
 					} else {
+						FileUtils.logToFile(" ERROR --- " + total + nons
+								+ " duplicado", ExecutionUtils.getConfiguration());
 						output.println("Mensaje duplicado");
+						ExecutionUtils.setErrors(ExecutionUtils.getErrors()+1);
 					}
 				} else {
 					FileUtils.logToFile(" ERROR --- " + total + nons
 							+ " no integro", ExecutionUtils.getConfiguration());
 					output.println("Mensaje enviado no integro.");
+					ExecutionUtils.setErrors(ExecutionUtils.getErrors()+1);
 				}
 				output.close();
 				input.close();
@@ -110,6 +115,9 @@ public class IntegrityVerifierServer {
 				"C:\\Users\\ADRIAN\\Desktop\\Universidad\\SSI\\PAI\\PAI2\\Logs\\");
 		Configuration config = new Configuration(globalConfig);
 		ExecutionUtils.setConfiguration(config);
+		ExecutionUtils.setOk(0);
+		ExecutionUtils.setErrors(0);
+
 
 		IntegrityVerifierServer server = new IntegrityVerifierServer();
 		server.runServer();
