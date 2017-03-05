@@ -22,15 +22,14 @@ import javax.crypto.Mac;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
-
 import com.psi2.config.Configuration;
 
 public class FileUtils {
-	
+
 	/**
 	 * Method to get the mac of a message
 	 */
-	public static String getMac(String mensaje,Configuration config){
+	public static String getMac(String mensaje, Configuration config) {
 		Mac mac1 = null;
 		try {
 			mac1 = Mac.getInstance(config.getAlgoritmo());
@@ -39,18 +38,18 @@ public class FileUtils {
 			e1.printStackTrace();
 		}
 		byte[] b = null;
-		SecretKey clave = new SecretKeySpec(config.getClave().getBytes(), 0, config.getClave().getBytes().length, config.getAlgoritmo());
-			try {
-				mac1.init(clave);
-				mac1.update(mensaje.getBytes());
-				b = mac1.doFinal();
-			} catch (InvalidKeyException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			return Conversion.byteArrayToHexString(b);
+		SecretKey clave = new SecretKeySpec(config.getClave().getBytes(), 0,
+				config.getClave().getBytes().length, config.getAlgoritmo());
+		try {
+			mac1.init(clave);
+			mac1.update(mensaje.getBytes());
+			b = mac1.doFinal();
+		} catch (InvalidKeyException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return Conversion.byteArrayToHexString(b);
 
-		
 	}
 
 	/**
@@ -75,14 +74,14 @@ public class FileUtils {
 			if (fis != null)
 				fis.close();
 		} catch (IOException e) {
-			
+
 		}
 
 		String str = null;
 		try {
 			str = new String(data, "UTF-8");
 		} catch (UnsupportedEncodingException e) {
-			
+
 		}
 		return str;
 	}
@@ -108,14 +107,14 @@ public class FileUtils {
 			if (fis != null)
 				fis.close();
 		} catch (IOException e) {
-			
+
 		}
 
 		String str = null;
 		try {
 			str = new String(data, "UTF-8");
 		} catch (UnsupportedEncodingException e) {
-			
+
 		}
 		return str;
 	}
@@ -129,13 +128,13 @@ public class FileUtils {
 			content = content + "A>0@3%`sx4bvP35YuAe|";
 			convertme = content.getBytes("UTF-8");
 		} catch (UnsupportedEncodingException e) {
-			
+
 		}
 		MessageDigest md = null;
 		try {
 			md = MessageDigest.getInstance(config.getAlgoritmo());
 		} catch (NoSuchAlgorithmException e) {
-			
+
 		}
 		String res = "";
 		if (convertme != null) {
@@ -152,6 +151,7 @@ public class FileUtils {
 		}
 		return result;
 	}
+
 	/**
 	 * Method to log a string
 	 */
@@ -166,7 +166,8 @@ public class FileUtils {
 				dataFolder.mkdirs();
 			}
 			boolean res = true;
-			File saveTo = new File(config.getGlobalConfig().getLogsDirectory(), "logMac.txt");
+			File saveTo = new File(config.getGlobalConfig().getLogsDirectory(),
+					"logMac.txt");
 			if (!saveTo.exists()) {
 				saveTo.createNewFile();
 				res = false;
@@ -191,11 +192,10 @@ public class FileUtils {
 
 		} catch (IOException e) {
 
-			
-
 		}
 
 	}
+
 	/**
 	 * Method to log a string
 	 */
@@ -239,8 +239,6 @@ public class FileUtils {
 			pw.close();
 
 		} catch (IOException e) {
-
-			
 
 		}
 
@@ -287,8 +285,6 @@ public class FileUtils {
 
 		} catch (IOException e) {
 
-			
-
 		}
 
 	}
@@ -334,45 +330,19 @@ public class FileUtils {
 
 		} catch (IOException e) {
 
-			
-
 		}
 
 	}
 
-	/**
-	 * Create the daily log, looking if all the directories/files/webs are
-	 * correct
-	 */
-	public static void proveAll(Configuration config) {
-		Set<String> directories = config.getProperties().keySet();
-		for (String s : directories) {
-			if (!s.equalsIgnoreCase("urls")) {
-				logToFile("#Checking directory: " + s, config);
-				logToFile(DirectoryUtils.readDirectory(s, config), config);
-				List<String> files = config.getProperties().get(s);
-				for (String file : files) {
-					logToFile(DirectoryUtils.proveFile(s, file, config), config);
-				}
-			}
-		}
-		logToFile("#Checking webs", config);
-		List<String> webs = config.getProperties().get("urls");
-		for (String s : webs) {
 
-			logToFile(DirectoryUtils.proveWeb(s, config), config);
-
-		}
-		createDailyReport(config);
-	}
 
 	/**
 	 * Create the daily report
 	 */
 	public static void createDailyReport(Configuration config) {
-		int correct = 0;
-		int errors = 0;
-		int total = 0;
+		int correct = ExecutionUtils.getOk();
+		int errors = ExecutionUtils.getErrors();
+		int total = correct + errors;
 		Date now2 = new Date();
 
 		Calendar cal = Calendar.getInstance();
@@ -382,60 +352,40 @@ public class FileUtils {
 		if (day == 1) {
 			createMonthlyReport(config);
 		}
-		SimpleDateFormat formato = new SimpleDateFormat("yyyy-MM-dd");
-		File log = new File(config.getGlobalConfig().getLogsDirectory(),
-				formato.format(now2) + "-log.txt");
-		if (log.exists()) {
-			try (BufferedReader br = new BufferedReader(new FileReader(log))) {
-				String line;
-				while ((line = readLine(br)) != null) {
-					if (line.contains("OK ---")) {
-						correct++;
-						total++;
-					} else if (line.contains("ERROR ---")) {
-						errors++;
-						total++;
-					}
-				}
-			} catch (IOException e) {
-				
-			}
-			reportToFile("Total checks = " + total, config);
-			reportToFile("OK = " + correct, config);
-			reportToFile("ERROR = " + errors, config);
-			reportToFile(
-					"Ratio = " + ((double) correct / (double) total) * 100,
-					config);
-		}
-
+		reportToFile("Total checks = " + total, config);
+		reportToFile("OK = " + correct, config);
+		reportToFile("ERROR = " + errors, config);
+		reportToFile("Ratio = " + ((double) correct / (double) total) * 100,
+				config);
+		ExecutionUtils.setErrors(0);
+		ExecutionUtils.setOk(0);
 	}
+
 	/**
 	 * Read a line
 	 */
-	public static String readLine(BufferedReader br) throws IOException{
-		StringBuffer sb=new StringBuffer();
+	public static String readLine(BufferedReader br) throws IOException {
+		StringBuffer sb = new StringBuffer();
 		int intC;
-		intC=br.read();
-		String line=null;
-		do{
-			if(intC==-1)
+		intC = br.read();
+		String line = null;
+		do {
+			if (intC == -1)
 				return null;
-			char c=(char) intC;
-			if(c=='\n'){
+			char c = (char) intC;
+			if (c == '\n') {
 				break;
 			}
-			if(sb.length()>=1000000){
+			if (sb.length() >= 1000000) {
 				throw new IOException("input too long");
 			}
 			sb.append(c);
-		} while(((intC=br.read())!=-1));
-		line=sb.toString();
-		System.out.println(line);
-		line=line.replaceAll("\r", "");
-		System.out.println(line);
+		} while (((intC = br.read()) != -1));
+		line = sb.toString();
+		line = line.replaceAll("\r", "");
 		return line;
-		}
-	
+	}
+
 	/**
 	 * Create the monthly report
 	 */
@@ -495,7 +445,7 @@ public class FileUtils {
 							}
 						}
 					} catch (IOException e) {
-						
+
 					}
 
 				}
