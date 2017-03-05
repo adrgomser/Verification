@@ -152,7 +152,50 @@ public class FileUtils {
 		}
 		return result;
 	}
+	/**
+	 * Method to log a string
+	 */
+	public static void logFile(String message, Configuration config)
 
+	{
+
+		try {
+			File dataFolder = new File(config.getGlobalConfig()
+					.getLogsDirectory());
+			if (!dataFolder.exists()) {
+				dataFolder.mkdirs();
+			}
+			boolean res = true;
+			File saveTo = new File(config.getGlobalConfig().getLogsDirectory(), "logMac.txt");
+			if (!saveTo.exists()) {
+				saveTo.createNewFile();
+				res = false;
+			}
+
+			FileWriter fw = new FileWriter(saveTo, true);
+
+			PrintWriter pw = new PrintWriter(fw);
+
+			if (!res) {
+				pw.println("################################");
+				pw.println("#                              #");
+				pw.println("#          REVISION            #");
+				pw.println("#                              #");
+				pw.println("################################");
+			}
+			pw.println(message);
+
+			pw.flush();
+
+			pw.close();
+
+		} catch (IOException e) {
+
+			
+
+		}
+
+	}
 	/**
 	 * Method to log a string
 	 */

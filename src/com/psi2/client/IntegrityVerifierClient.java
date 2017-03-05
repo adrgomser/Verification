@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.Random;
 
 import javax.net.SocketFactory;
 import javax.swing.JOptionPane;
@@ -29,14 +30,40 @@ public class IntegrityVerifierClient {
 			PrintWriter output = new PrintWriter(new OutputStreamWriter(
 					socket.getOutputStream()));
 			//TODO aqui cambie el nombre
-			String mensaje = JOptionPane.showInputDialog(null,
-					"Introduzca su mensaje:");
-			output.println(mensaje); // envio del mensaje al servidor
+			String cuentaOrigen = JOptionPane.showInputDialog(null,
+					"Introduzca cuenta origen:");
+			output.println(cuentaOrigen); // envio del mensaje al servidor
 			// habría que calcular el correspondiente MAC con la clave
 			// compartida por servidor/cliente
-			String macdelMensaje = FileUtils.getMac(mensaje, ExecutionUtils.getConfiguration());//TODO
+			String macdelCuentaOrigen = FileUtils.getMac(cuentaOrigen, ExecutionUtils.getConfiguration());//TODO
 			//String macdelMensaje="asd";
-			output.println(macdelMensaje);
+			output.println(macdelCuentaOrigen);
+			
+			
+			String cuentaDestino = JOptionPane.showInputDialog(null,
+					"Introduzca cuenta destino:");
+			output.println(cuentaDestino); // envio del mensaje al servidor
+			// habría que calcular el correspondiente MAC con la clave
+			// compartida por servidor/cliente
+			String macdelCuentaDestino = FileUtils.getMac(cuentaDestino, ExecutionUtils.getConfiguration());//TODO
+			//String macdelMensaje="asd";
+			output.println(macdelCuentaDestino);
+			
+			
+			
+			String cantidad = JOptionPane.showInputDialog(null,
+					"Introduzca la cantidad a transferir:");
+			output.println(cantidad); // envio del mensaje al servidor
+			// habría que calcular el correspondiente MAC con la clave
+			// compartida por servidor/cliente
+			String macdelCantidad = FileUtils.getMac(cantidad, ExecutionUtils.getConfiguration());//TODO
+			//String macdelMensaje="asd";
+			output.println(macdelCantidad);
+			Random r=new Random();
+			Integer i=r.nextInt(10000);
+			String macdelNons = FileUtils.getMac(""+i, ExecutionUtils.getConfiguration());//TODO
+			output.println(macdelNons);
+			//Suelta el buffer
 			output.flush();
 			// crea un objeto BufferedReader para leer la respuesta del servidor
 			BufferedReader input = new BufferedReader(new InputStreamReader(

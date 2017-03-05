@@ -1,6 +1,7 @@
 package com.psi2.server;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -43,21 +44,54 @@ public class IntegrityVerifierServer {
 				PrintWriter output = new PrintWriter(new OutputStreamWriter(
 						socket.getOutputStream()));
 				// se lee del cliente el mensaje y el macdelMensajeEnviado
-				String mensaje = FileUtils.readLine(input);
+				String cuentaOrigen = FileUtils.readLine(input);
+				String macMensajeOrigen = FileUtils.readLine(input);
+				String cuentaDestino = FileUtils.readLine(input);
+				String macMensajeDestino = FileUtils.readLine(input);
+				String cantidad = FileUtils.readLine(input);
+				String macMensajeCantidad = FileUtils.readLine(input);
+				String nons = FileUtils.readLine(input);
 
-				String macMensajeEnviado = FileUtils.readLine(input);
-				String macdelMensajeCalculado = FileUtils.getMac(mensaje, ExecutionUtils.getConfiguration());;
-				//String macdelMensajeCalculado="asd";
+				String macdelMensajeOrigenCalculado = FileUtils.getMac(
+						cuentaOrigen, ExecutionUtils.getConfiguration());
+				;
+				String macdelMensajeDestinoCalculado = FileUtils.getMac(
+						cuentaDestino, ExecutionUtils.getConfiguration());
+				;
+				String macdelMensajeCantidadCalculado = FileUtils.getMac(
+						cantidad, ExecutionUtils.getConfiguration());
+				;
+
+				String total = macMensajeOrigen + macMensajeDestino
+						+ macMensajeCantidad;
+				String totalCalculado = macdelMensajeOrigenCalculado
+						+ macdelMensajeDestinoCalculado
+						+ macdelMensajeCantidadCalculado;
+				// String macdelMensajeCalculado="asd";
 				// a continuación habría que calcular el macdelMensajeEnviado
 				// que podría ser
 				// macdelMensajeCalculado y tener en cuenta los nonces para
 				// evitar los ataques de replay
 				// ………………………………..
-				if (macMensajeEnviado.equals(macdelMensajeCalculado)) {
-					FileUtils.logToFile(" OK --- "+macMensajeEnviado+" integro",ExecutionUtils.getConfiguration());
-					output.println("Mensaje enviado integro ");
+				if (total.equals(totalCalculado)) {
+					File saveTo = new File(ExecutionUtils.getConfiguration()
+							.getGlobalConfig().getLogsDirectory(), "logMac.txt");
+					String content = FileUtils.readFile(saveTo);
+					if (!content.contains(total + nons)) {
+						FileUtils
+								.logToFile(" OK --- " + total + nons
+										+ " integro",
+										ExecutionUtils.getConfiguration());
+						FileUtils
+						.logFile(total + nons,
+								ExecutionUtils.getConfiguration());
+						output.println("Mensaje enviado integro ");
+					} else {
+						output.println("Mensaje duplicado");
+					}
 				} else {
-					FileUtils.logToFile(" ERROR --- "+macMensajeEnviado+" no integro",ExecutionUtils.getConfiguration());
+					FileUtils.logToFile(" ERROR --- " + total + nons
+							+ " no integro", ExecutionUtils.getConfiguration());
 					output.println("Mensaje enviado no integro.");
 				}
 				output.close();
@@ -71,9 +105,10 @@ public class IntegrityVerifierServer {
 
 	// ejecucion del servidor
 	public static void main(String args[]) throws Exception {
-		GlobalConfiguration globalConfig=new GlobalConfiguration("C:\\Users\\ADRIAN\\Desktop\\Universidad\\SSI\\PAI\\PAI2\\config.properties", 
+		GlobalConfiguration globalConfig = new GlobalConfiguration(
+				"C:\\Users\\ADRIAN\\Desktop\\Universidad\\SSI\\PAI\\PAI2\\config.properties",
 				"C:\\Users\\ADRIAN\\Desktop\\Universidad\\SSI\\PAI\\PAI2\\Logs\\");
-		Configuration config=new Configuration(globalConfig);
+		Configuration config = new Configuration(globalConfig);
 		ExecutionUtils.setConfiguration(config);
 
 		IntegrityVerifierServer server = new IntegrityVerifierServer();
