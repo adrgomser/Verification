@@ -89,8 +89,8 @@ public class IntegrityVerifierClient {
 
 	// ejecución del cliente de verificación de la integridad
 	public static void main(String args[]) {
-		GlobalConfiguration globalConfig=new GlobalConfiguration("C:\\Users\\ADRIAN\\Desktop\\Universidad\\SSI\\PAI\\PAI2\\config.properties", 
-				"C:\\Users\\ADRIAN\\Desktop\\Universidad\\SSI\\PAI\\PAI2\\Logs\\");
+		GlobalConfiguration globalConfig=new GlobalConfiguration("C:\\Users\\<User>\\Desktop\\Universidad\\SSI\\PAI\\PAI2\\config.properties", 
+				"C:\\Users\\<User>\\Desktop\\Universidad\\SSI\\PAI\\PAI2\\Logs\\");
 		Configuration config=new Configuration(globalConfig);
 		ExecutionUtils.setConfiguration(config);
 

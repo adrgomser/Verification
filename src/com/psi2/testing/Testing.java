@@ -25,8 +25,8 @@ public class Testing {
 		// Primero debes correr la clase IntegrityVerifierServer del paquete
 		// com.psi2.server
 		GlobalConfiguration globalConfig = new GlobalConfiguration(
-				"C:\\Users\\ADRIAN\\Desktop\\Universidad\\SSI\\PAI\\PAI2\\config.properties",
-				"C:\\Users\\ADRIAN\\Desktop\\Universidad\\SSI\\PAI\\PAI2\\Logs\\");
+				"C:\\Users\\<User>\\Desktop\\Universidad\\SSI\\PAI\\PAI2\\config.properties",
+				"C:\\Users\\<User>\\Desktop\\Universidad\\SSI\\PAI\\PAI2\\Logs\\");
 		Configuration config = new Configuration(globalConfig);
 		ExecutionUtils.setConfiguration(config);
 		ExecutionUtils.setOk(0);
