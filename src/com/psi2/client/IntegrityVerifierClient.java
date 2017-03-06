@@ -68,7 +68,7 @@ public class IntegrityVerifierClient {
 			// crea un objeto BufferedReader para leer la respuesta del servidor
 			BufferedReader input = new BufferedReader(new InputStreamReader(
 					socket.getInputStream()));
-			String respuesta = FileUtils.readLine(input); // lee la respuesta del
+			String respuesta = readLine(input); // lee la respuesta del
 													// servidor
 			JOptionPane.showMessageDialog(null, respuesta); // muestra la
 															// respuesta al
@@ -95,6 +95,30 @@ public class IntegrityVerifierClient {
 		ExecutionUtils.setConfiguration(config);
 
 		new IntegrityVerifierClient();
+	}
+	/**
+	 * Read a line
+	 */
+	public static String readLine(BufferedReader br) throws IOException {
+		StringBuffer sb = new StringBuffer();
+		int intC;
+		intC = br.read();
+		String line = null;
+		do {
+			if (intC == -1)
+				return null;
+			char c = (char) intC;
+			if (c == '\n') {
+				break;
+			}
+			if (sb.length() >= 1000000) {
+				throw new IOException("input too long");
+			}
+			sb.append(c);
+		} while (((intC = br.read()) != -1));
+		line = sb.toString();
+		line = line.replaceAll("\r", "");
+		return line;
 	}
 
 	

@@ -44,13 +44,13 @@ public class IntegrityVerifierServer {
 				PrintWriter output = new PrintWriter(new OutputStreamWriter(
 						socket.getOutputStream()));
 				// se lee del cliente el mensaje y el macdelMensajeEnviado
-				String cuentaOrigen = FileUtils.readLine(input);
-				String macMensajeOrigen = FileUtils.readLine(input);
-				String cuentaDestino = FileUtils.readLine(input);
-				String macMensajeDestino = FileUtils.readLine(input);
-				String cantidad = FileUtils.readLine(input);
-				String macMensajeCantidad = FileUtils.readLine(input);
-				String nons = FileUtils.readLine(input);
+				String cuentaOrigen = readLine(input);
+				String macMensajeOrigen = readLine(input);
+				String cuentaDestino = readLine(input);
+				String macMensajeDestino = readLine(input);
+				String cantidad = readLine(input);
+				String macMensajeCantidad = readLine(input);
+				String nons = readLine(input);
 
 				String macdelMensajeOrigenCalculado = FileUtils.getMac(
 					cuentaOrigen, ExecutionUtils.getConfiguration());
@@ -121,6 +121,30 @@ public class IntegrityVerifierServer {
 
 		IntegrityVerifierServer server = new IntegrityVerifierServer();
 		server.runServer();
+	}
+	/**
+	 * Read a line
+	 */
+	public static String readLine(BufferedReader br) throws IOException {
+		StringBuffer sb = new StringBuffer();
+		int intC;
+		intC = br.read();
+		String line = null;
+		do {
+			if (intC == -1)
+				return null;
+			char c = (char) intC;
+			if (c == '\n') {
+				break;
+			}
+			if (sb.length() >= 1000000) {
+				throw new IOException("input too long");
+			}
+			sb.append(c);
+		} while (((intC = br.read()) != -1));
+		line = sb.toString();
+		line = line.replaceAll("\r", "");
+		return line;
 	}
 
 }

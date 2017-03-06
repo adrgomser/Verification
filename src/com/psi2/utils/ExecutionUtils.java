@@ -21,9 +21,9 @@ public class ExecutionUtils {
 	/**
      *  Start the clock
      */
-	public static void RunUtility(JLabel lblTimer) {
+	public static void runUtility() {
 		if(t==null){
-		t = new Timer(timerRepeater, clock(lblTimer));
+		t = new Timer(timerRepeater, clock());
 		repetitions=0;
 		}
 		t.start();
@@ -31,7 +31,7 @@ public class ExecutionUtils {
 	/**
      *  Stop the clock
      */
-	public static void StopUtility() {
+	public static void stopUtility() {
 
 		t.stop();
 	}
@@ -49,7 +49,7 @@ public class ExecutionUtils {
 	/**
      *  Initialize the clock label
      */
-	public static ActionListener clock(JLabel lblTimer) {
+	public static ActionListener clock() {
 
 		ActionListener action = new ActionListener() {
 

@@ -19,7 +19,7 @@ import com.psi2.utils.FileUtils;
 public class Testing {
 
 	private static boolean whiteBoxTesting = false;
-	private static boolean grayBoxTesting = false;
+	private static boolean grayBoxTesting = true;
 
 	public static void main(String[] args) {
 		// Primero debes correr la clase IntegrityVerifierServer del paquete
@@ -29,6 +29,9 @@ public class Testing {
 				"C:\\Users\\ADRIAN\\Desktop\\Universidad\\SSI\\PAI\\PAI2\\Logs\\");
 		Configuration config = new Configuration(globalConfig);
 		ExecutionUtils.setConfiguration(config);
+		ExecutionUtils.setOk(0);
+		ExecutionUtils.setErrors(0);
+		ExecutionUtils.runUtility();
 
 		if (whiteBoxTesting) {
 			System.out.println(
@@ -37,7 +40,7 @@ public class Testing {
 
 		if (grayBoxTesting) {
 			System.out.println(
-					"I am going to give you the value of the Configuration, it should be the value of globalConfig variable up this line, the value taken is"
+					"I am going to give you the value of the Configuration, it should be the value of globalConfig variable up this line, the value taken is "
 							+ ExecutionUtils.getConfiguration());
 		}
 
@@ -59,7 +62,7 @@ public class Testing {
 
 				if (grayBoxTesting) {
 					System.out.println(
-							"I am going to give you the value of the Configuration, it should be the value given in the input, the value taken is"
+							"I am going to give you the value of the Configuration, it should be the value given in the input, the value taken is "
 									+ cuentaOrigen);
 				}
 
@@ -76,7 +79,7 @@ public class Testing {
 
 				if (grayBoxTesting) {
 					System.out.println(
-							"I am going to give you the value of the mac, it should be the value given in the input, the value taken is"
+							"I am going to give you the value of the mac, it should be the value given in the input, the value taken is "
 									+ macdelCuentaOrigen);
 				}
 				String cuentaDestino = JOptionPane.showInputDialog(null, "Introduzca cuenta destino:");
@@ -90,7 +93,7 @@ public class Testing {
 
 				if (grayBoxTesting) {
 					System.out.println(
-							"I am going to give you the value of the mac, it should be the value given in the input, the value taken is"
+							"I am going to give you the value of the mac, it should be the value given in the input, the value taken is "
 									+ cuentaDestino);
 				}
 
@@ -105,7 +108,7 @@ public class Testing {
 
 				if (grayBoxTesting) {
 					System.out.println(
-							"I am going to give you the value of the mac, it should be the value given in the input, the value taken is"
+							"I am going to give you the value of the mac, it should be the value given in the input, the value taken is "
 									+ macdelCuentaDestino);
 				}
 
@@ -120,7 +123,7 @@ public class Testing {
 
 				if (grayBoxTesting) {
 					System.out.println(
-							"I am going to give you the value of the quantity, it should be the value given in the input, the value taken is"
+							"I am going to give you the value of the quantity, it should be the value given in the input, the value taken is "
 									+ cantidad);
 				}
 				String macdelCantidad = FileUtils.getMac(cantidad, ExecutionUtils.getConfiguration());// TODO
@@ -134,7 +137,7 @@ public class Testing {
 
 				if (grayBoxTesting) {
 					System.out.println(
-							"I am going to give you the value of the mac, it should be the value given in the input, the value taken is"
+							"I am going to give you the value of the mac, it should be the value given in the input, the value taken is "
 									+ macdelCantidad);
 				}
 
@@ -147,7 +150,7 @@ public class Testing {
 				// crea un objeto BufferedReader para leer la respuesta del
 				// servidor
 				BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-				String respuesta = FileUtils.readLine(input); // lee la
+				String respuesta = readLine(input); // lee la
 																// respuesta del
 				// servidor
 				JOptionPane.showMessageDialog(null, respuesta); // muestra la
@@ -167,5 +170,30 @@ public class Testing {
 			}
 		}
 
+	}
+	
+	/**
+	 * Read a line
+	 */
+	public static String readLine(BufferedReader br) throws IOException {
+		StringBuffer sb = new StringBuffer();
+		int intC;
+		intC = br.read();
+		String line = null;
+		do {
+			if (intC == -1)
+				return null;
+			char c = (char) intC;
+			if (c == '\n') {
+				break;
+			}
+			if (sb.length() >= 1000000) {
+				throw new IOException("input too long");
+			}
+			sb.append(c);
+		} while (((intC = br.read()) != -1));
+		line = sb.toString();
+		line = line.replaceAll("\r", "");
+		return line;
 	}
 }
